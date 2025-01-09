@@ -1,0 +1,59 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #000; /* Crna pozadina */
+        color: #fff; /* Bijeli tekst */
+    }
+    .container {
+        max-width: 800px;
+        margin: 10px auto;
+        padding: 5px;
+        background: #1a1a1a; /* Tamna pozadina u kutijama */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    h1, h2 {
+        text-align: center;
+        color: #fff; /* Bijeli tekst za naslove */
+    }
+    #balance, #bitcoin-price {
+        font-weight: bold;
+        color: #ff7f00; /* Narandžasta boja za iznose */
+    }
+    .chat {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px 0;
+        height: 200px;
+        overflow-y: scroll;
+        background: #2b2b2b; /* Tamnija pozadina za chat */
+    }
+    .nickname-container {
+        margin-bottom: 10px;
+    }
+    input, button {
+        padding: 20px;
+        margin: 20px 0;
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #444;
+        background-color: #333;
+        color: #fff;
+    }
+    button {
+        background-color: #ff7f00; /* Narandžasta boja za dugmadi */
+    }
+    button:hover {
+        background-color: #e67e00; /* Svjetlija narandžasta za hover */
+    }
+    canvas {
+        margin-top: 20px;
+    }
+
+    /* LV uzorak pozadine (možeš koristiti sličan uzorak za pozadinu) */
+    .lv-pattern {
+        background-image: url('path/to/your/lv-pattern.png'); /* Potrebno je dodati LV uzorak */
+        background-repeat: repeat;
+    }
+</style>

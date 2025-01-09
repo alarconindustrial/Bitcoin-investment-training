@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin trgovanje i trening</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Crna pozadina */
+            color: #fff; /* Bijeli tekst */
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1a; /* Tamna pozadina u kutijama */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .left-container, .right-container {
+            width: 48%;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #fff; /* Bijeli tekst za naslove */
+        }
+        #balance, #bitcoin-price, #earnings {
+            font-weight: bold;
+            color: #ff7f00; /* Narandžasta boja za iznose */
+        }
+        .chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            height: 200px;
+            overflow-y: scroll;
+            background: #2b2b2b; /* Tamnija pozadina za chat */
+        }
+        .nickname-container {
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #fff;
+        }
+        button {
+            background-color: #ff7f00; /* Narandžasta boja za dugmadi */
+        }
+        button:hover {
+            background-color: #e67e00; /* Svjetlija narandžasta za hover */
+        }
+        canvas {
+            margin-top: 20px;
+        }
+
+        .right-container {
+            padding-left: 20px;
+        }
+        .article {
+            background: #2b2b2b;
+            padding: 15px;
+            border-radius: 5px;
+            color: #fff;
+        }
+        .article h3 {
+            color: #ff7f00;
+        }
+
+        /* Novi stil za korisnike */
+        .user {
+            margin-bottom: 15px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user p {
+            margin: 5px 0;
+        }
+
+        .demo-time {
+            color: #ff7f00;
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Lijevi dio simulacije -->
+        <div class="left-container">
+            <h1>Bitcoin trgovanje za početnike DEMO Verzija 3 min!</h1>
+            <p>Stanje računa: <span id="balance">5000.00</span> €</p>
+            <p>Trenutna cijena Bitcoina: <span id="bitcoin-price">979969</span> €</p>
+            <p>Trenutna zarada: <span id="earnings">0.00</span> €</p>
+
+            <button id="invest-btn">Uloži</button>
+            <button id="sell-btn">Prodaj</button>
+
+            <p id="message"></p>
+
+            <h2>Poruke korisnika</h2>
+            <div class="nickname-container">
+                <label for="nickname">Vaš ime:</label>
+                <input type="text" id="nickname" placeholder="Unesite nadimak">
+            </div>
+            <div id="chat" class="chat"></div>
+            <input type="text" id="chat-input" placeholder="Unesite poruku">
+            <button id="send-btn">Pošaljite</button>
+
+            <canvas id="bitcoin-chart" width="400" height="200"></canvas>
+
+            <!-- Demo odbrojavanje vremena -->
+            <div class="demo-time" id="demo-time">Demo verzija: 03:00</div>
+        </div>
+
+        <!-- Desni dio sa člankom i korisnicima -->
+        <div class="right-container">
+            <div class="article">
+                <h3>Simboli i informacije o Bitcoinu</h3>
+                <p><strong>Simboli:</strong> BTC, ₿</p>
+                <p><strong>Službeni korisnici:</strong> El Salvador</p>
+                <p><strong>ISO kod:</strong> BTC</p>
+                <p><strong>ISO 4217 kodovi:</strong> BTC, XBT</p>
+                <p><strong>Nagrada za blok:</strong> ₿3.125 (od 2024)</p>
+                <p><strong>Tečaj:</strong> Promjenjiv</p>
+                <p><strong>Funkcija raspršivanja:</strong> SHA-256 (dva kruga)</p>
+            </div>
+
+            <h3>Trenutne transakcije</h3>
+            <div id="user-list">
+                <!-- Simulirani korisnici -->
+                <div class="user">
+                    <p><strong>Ivan, Split:</strong> Uložio 2000 € i ostvario dobit od 500 €.</p>
+                    <p><strong>Ivana, Zagreb:</strong> Uložila 1500 € i izgubila 200 €.</p>
+                    <p><strong>Marko, Rijeka:</strong> Uložio 3000 € i ostvario dobit od 1000 €.</p>
+                    <p><strong>Lucija, Osijek:</strong> Uložila 1000 € i ostvarila dobit od 100 €.</p>
+                    <p><strong>Petar, Pula:</strong> Uložio 500 € i izgubio 50 €.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>VLASNIK & Autor aplikacije:</strong> Max Alarcon</p>
+        <p><strong>Email:</strong> <a href="mailto:alarcon-industrial@net.hr" style="color: #ff7f00;">alarcon-industrial@net.hr</a></p>
+        <p><strong>Cijena aplikacije:</strong> 13 € / preuzimanje</p>
+        <p><strong>Izrada aplikacije po naruđbi klijenta.</strong></p>
+        <p><strong>Autorska prava:</strong> Sva prava pridržana! Svako kopiranje sadržaja bit će prijavljeno u prostore policijskih službenika.</p>
+    </div>
+
+    <script>
+        let balance = 5000.00;
+        let bitcoinPrice = 979969;
+        let ukupnoUlaganje = 0;
+        let pocetnaCijena = bitcoinPrice;
+        let trenutnaZarada = 0;
+
+        const chatBox = document.getElementById("chat");
+        const chatInput = document.getElementById("chat-input");
+        const investBtn = document.getElementById("invest-btn");
+        const sellBtn = document.getElementById("sell-btn");
+        const sendBtn = document.getElementById("send-btn");
+        const demoTimeElem = document.getElementById("demo-time");
+
+        const randomComments = [
+            "Max Alarcon hvala na aplikaciji!",
+            "Odlična aplikacija, preporučam svima!",
+            "Bitcoin trading je sada puno lakši zahvaljujući ovoj aplikaciji!",
+            "Aplikacija je fantastična, vrlo jednostavna za korištenje!",
+            "Hvala na fantastičnoj aplikaciji, super su svi podaci!",
+            "Ova aplikacija mi je stvarno pomogla da bolje razumijem Bitcoin!",
+            "Max Alarcon, svaka čast na ovoj aplikaciji, odlična je!",
+            "Preporučam svima ovu aplikaciju, savršeno za početnike!"
+        ];
+
+        function sendRandomComment() {
+            const randomIndex = Math.floor(Math.random() * randomComments.length);
+            const randomNickname = ['Ana', 'Marko', 'Ivana', 'Petar', 'Luka', 'Lucija', 'Ivan', 'Maja'][Math.floor(Math.random() * 8)];
+            const randomComment = randomComments[randomIndex];
+
+            const messageElement = document.createElement("p");
+            messageElement.textContent = `${randomNickname}: ${randomComment}`;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        setInterval(sendRandomComment, 5000); // Simulacija slanja random komentara svakih 5 sekundi
+
+        // Funkcija za ulaganje
+        investBtn.addEventListener("click", function () {
+            const iznos = prompt("Koliko želite uložiti?");
+            const ulog = parseFloat(iznos);
+
+            if (!isNaN(ulog) && ulog > 0 && ulog <= balance) {
+                ukupnoUlaganje += ulog;
+                balance -= ulog;
+                pocetnaCijena = bitcoinPrice;
+
+                document.getElementById("balance").textContent = balance.toFixed(2);
+                document.getElementById("message").textContent = `Uložili ste ${ulog.toFixed(2)} € u Bitcoin.`;
+            } else {
+                document.getElementById("message").textContent = "Nevažeći iznos ili nemate dovoljno sredstava.";
+            }
+        });
+
+        // Funkcija za prodaju
+        sellBtn.addEventListener("click", function () {
+            if (ukupnoUlaganje > 0) {
+                trenutnaZarada = ukupnoUlaganje * (bitcoinPrice / pocetnaCijena) - ukupnoUlaganje;
+                balance += trenutnaZarada;
+                ukupnoUlaganje = 0;
+
+                document.getElementById("balance").textContent = balance.toFixed(2);
+                document.getElementById("earnings").textContent = trenutnaZarada.toFixed(2);
+                document.getElementById("message").textContent = `Prodano za ${trenutnaZarada.toFixed(2)} €. Saldo ažuriran.`;
+            } else {
+                document.getElementById("message").textContent = "Nemate ništa za prodati.";
+            }
+        });
+
+        // Slanje poruke
+        sendBtn.addEventListener("click", sendMessage);
+
+        function sendMessage() {
+            const nickname = document.getElementById("nickname").value.trim() || "Anonimni";
+            const poruka = chatInput.value.trim();
+            if (poruka === "") return;
+
+            const porukaElement = document.createElement("p");
+            porukaElement.textContent = `${nickname}: ${poruka}`;
+            chatBox.appendChild(porukaElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            chatInput.value = "";
+        }
+
+        // Pokretni graf
+        const ctx = document.getElementById('bitcoin-chart').getContext('2d');
+        const bitcoinChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Cijena Bitcoina (€)',
+                    data: [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Vrijeme'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Cijena (€)'
+                        }
+                    }
+                }
+            }
+        });
+
+        function azurirajGraf(cijena) {
+            const vrijeme = new Date().toLocaleTimeString();
+            bitcoinChart.data.labels.push(vrijeme);
+            bitcoinChart.data.datasets[0].data.push(cijena);
+
+            if (bitcoinChart.data.labels.length > 10) {
+                bitcoinChart.data.labels.shift();
+                bitcoinChart.data.datasets[0].data.shift();
+            }
+
+            bitcoinChart.update();
+        }
+
+        // Ažuriranje cijene Bitcoina i grafa svakih 5 sekundi
+        setInterval(() => {
+            const promjena = (Math.random() - 0.5) * 1000; // Simulacija promjene cijene
+            bitcoinPrice = Math.max(10000, bitcoinPrice + promjena);
+            document.getElementById("bitcoin-price").textContent = bitcoinPrice.toFixed(2);
+
+            // Izračunavanje trenutne zarade/gubitka na temelju promjene cijene
+            trenutnaZarada = ukupnoUlaganje * (bitcoinPrice / pocetnaCijena) - ukupnoUlaganje;
+            document.getElementById("earnings").textContent = trenutnaZarada.toFixed(2);
+
+            azurirajGraf(bitcoinPrice);
+        }, 5000);
+
+        // Odbrojavanje za demo verziju (3 minute)
+        let remainingTime = 180; // 3 minute u sekundama
+        const demoCountdown = setInterval(() => {
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            demoTimeElem.textContent = `Demo verzija: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            remainingTime--;
+
+            if (remainingTime < 0) {
+                clearInterval(demoCountdown);
+                alert("Demo verzija je istekla. Aplikacija se resetira.");
+                location.reload(); // Resetira aplikaciju
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
